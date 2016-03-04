@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_xiaoxi"
+        android:orderInCategory="100"
+        android:icon="@drawable/no_question_96dp"
+        android:title="消息"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_tongzhi"
+        android:orderInCategory="100"
+        android:icon="@drawable/no_question_96dp"
+        android:title="通知"
+        app:showAsAction="always" />
+</menu>
