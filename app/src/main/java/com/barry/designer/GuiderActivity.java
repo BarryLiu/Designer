@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 /**
- * 向导页面： 只有软件第一次用的时候会有向导页面，进入后会生成一个
+ * 向导页面： 只有软件第一次用的时候会有向导页面，进入后会生成一个xml
+ * 文件，如果没有表示没有登陆
  */
 public class GuiderActivity extends AppCompatActivity {
 
