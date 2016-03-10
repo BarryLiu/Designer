@@ -17,11 +17,19 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".GuiderActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,15 +38,15 @@
 
         </activity>
         <activity
-            android:name=".GuiderActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            
-        </activity>
-        <activity
             android:name=".DiscoverActivity"
             android:label="@string/title_activity_discover"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ShouYeActivity"
+            android:label="@string/title_activity_shou_ye"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>
