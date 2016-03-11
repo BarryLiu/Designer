@@ -26,4 +26,5 @@
     <string name="title_activity_discover">发现</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_shou_ye">首页</string>
+    <string name="title_activity_resiger">Sign in</string>
 </resources>

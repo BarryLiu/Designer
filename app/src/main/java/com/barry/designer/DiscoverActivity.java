@@ -1,6 +1,8 @@
 package com.barry.designer;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.widget.Toast;
 
 import com.barry.designer.fragment.DiscoverFragment;
 
@@ -14,8 +16,4 @@ public class DiscoverActivity extends MainActivity {
         setContentFragment(fragment);
 
     }
-
-
-
-
 }

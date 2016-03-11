@@ -4,18 +4,19 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +26,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.barry.designer.utils.BPUtil;
 import com.barry.designer.utils.BitmapUtil;
 
+import github.chenupt.springindicator.SpringIndicator;
 import me.relex.circleindicator.CircleIndicator;
-
 
 /**
  * 向导页面： 只有软件第一次用的时候会有向导页面，进入后会生成一个xml
@@ -45,9 +47,39 @@ public class GuiderActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        bitmaps[0].recycle();
+        bitmaps[1].recycle();
+        bitmaps[2].recycle();
+        bitmaps[0] = null;
+        bitmaps[1] = null;
+        bitmaps[2] = null;
+
+        System.gc();
+    }
+
+    static Bitmap[] bitmaps = new Bitmap[3];
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guider);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+       /* bitmaps[0] = BitmapUtil.getCutBitmap(GuiderActivity.this, imageIds[0], width, height);
+        bitmaps[1] = BitmapUtil.getCutBitmap(GuiderActivity.this, imageIds[1], width, height);
+        bitmaps[2] = BitmapUtil.getCutBitmap(GuiderActivity.this, imageIds[2], width, height);*/
+
+        bitmaps[0] = decoeSampleBitmap(getResources(), imageIds[0]);
+        bitmaps[1] = decoeSampleBitmap(getResources(), imageIds[1]);
+        bitmaps[2] = decoeSampleBitmap(getResources(),imageIds[2]);
+
 
         viewPager = (ViewPager) findViewById(R.id.vp);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -63,17 +95,44 @@ public class GuiderActivity extends AppCompatActivity {
         });
 
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.ci_guider);
-        Toast.makeText(GuiderActivity.this, "  indicator:"+indicator, Toast.LENGTH_SHORT).show();
-
         indicator.setViewPager(viewPager);
+
+        SpringIndicator indicator2 = (SpringIndicator) findViewById(R.id.indicator);
+        indicator2.setViewPager(viewPager);
 
 
     }
 
+    public Bitmap decoeSampleBitmap(Resources resources,int id){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(resources,id,options);
+
+        int height = options.outHeight;
+        int width = options.outWidth;
+
+        String imageType = options.outMimeType;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int windWidth = metrics.widthPixels;
+        int windHeight= metrics.heightPixels;
+
+        options.inSampleSize = 1;
+        if(height >windHeight || width >windWidth){
+            int heightRation = Math.round((float)height/(float)windWidth);
+            int widthRation = Math.round((float)width/(float)windHeight);
+            options.inSampleSize = heightRation <widthRation ? heightRation : widthRation;
+        }
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(resources,id,options);
+    }
+
+
     //登录
     public void login(View view) {
 
-        View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
+      /*  View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
         Button signBtn = (Button) loginView.findViewById(R.id.email_sign_in_button);
         signBtn.setText("登陆");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -93,12 +152,15 @@ public class GuiderActivity extends AppCompatActivity {
 //                Intent intent = new Intent(GuiderActivity.this, MainActivity.class);
 //                startActivity(intent);
             }
-        });
+        });*/
+
+        Intent intent= new Intent(this,LoginActivity.class);
+        startActivityForResult(intent,100);
     }
 
     //注册
     public void sign(View view) {
-        final View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
+      /*  final View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
         Button signBtn = (Button) loginView.findViewById(R.id.email_sign_in_button);
         signBtn.setText("注册");
         TextInputLayout phoneLayout = (TextInputLayout) loginView.findViewById(R.id.phone_layout);
@@ -123,6 +185,11 @@ public class GuiderActivity extends AppCompatActivity {
 //                startActivity(intent);
             }
         });
+
+        */
+
+        Intent intent = new Intent(this,ResigerActivity.class);
+        startActivity(intent);
     }
 
     //创建一个Fragment的类
@@ -137,7 +204,6 @@ public class GuiderActivity extends AppCompatActivity {
             return fragment;
         }
 
-        @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             //创建一个imageView
@@ -148,9 +214,11 @@ public class GuiderActivity extends AppCompatActivity {
             //找到imageView
             ImageView imageView = (ImageView) view.findViewById(R.id.iv_guider);
 
+
             Bitmap oldBm = BitmapFactory.decodeResource(inflater.getContext().getResources(), imageIds[position]);
-            Bitmap bm = BitmapUtil.scaleImage(oldBm, 1280, 800);
-            imageView.setImageBitmap(bm);
+            // Bitmap bm = BitmapUtil.scaleImage(oldBm, 1280, 800);
+            //Bitmap bm  = BitmapUtil.getCutBitmap(oldBm,480 ,800);
+            imageView.setImageBitmap(bitmaps[position]);
             // imageView.setImageResource(imageIds[position]);
 
             imageView.setAdjustViewBounds(true);

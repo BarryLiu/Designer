@@ -18,16 +18,16 @@ import com.barry.designer.R;
  * Created by Barry on 2016/3/9.
  */
 public class DiscoverFragment extends Fragment {
-
     private SectionsPagerAdapter mSectionsPagerAdapter;
     /**
      */
     private ViewPager mViewPager;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.frag_activity_discovery,null);
+        View rootView = inflater.inflate(R.layout.frag_activity_discovery, null);
 
 
         mSectionsPagerAdapter = new DiscoverFragment.SectionsPagerAdapter(getChildFragmentManager());
@@ -80,7 +80,6 @@ public class DiscoverFragment extends Fragment {
         }
     }
 
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -100,7 +99,6 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 4;
         }
 

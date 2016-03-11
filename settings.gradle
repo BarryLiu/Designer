@@ -1,2 +1,2 @@
-include ':libspringindicator'
+include ':floatbuttonplus'
 include ":app"
