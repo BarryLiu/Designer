@@ -3,6 +3,7 @@ package com.barry.designer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -31,6 +32,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.barry.designer.bean.ResponseBean;
+import com.barry.designer.bean.UserBean;
+import com.barry.designer.http.GKCallBack;
+import com.barry.designer.http.HttpConfig;
+import com.barry.designer.http.HttpUtils;
+import com.barry.designer.utils.AbMd5;
+import com.barry.designer.utils.DialogUtils;
+
+import org.xutils.common.util.MD5;
+import org.xutils.http.app.ResponseParser;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +71,6 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -152,9 +166,6 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -192,9 +203,39 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
+            /*showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+            */
+
+            UserBean ub = new UserBean();
+            ub.setName(email);
+            ub.setPwd(AbMd5.MD5(password));
+
+            HttpUtils.resiger(ub, new GKCallBack() {
+                @Override
+                public void onSuccess(String result) {
+                    //注册消息发送成功
+                    //关闭进度条
+                    showProgress(false);
+                    ResponseBean rb =HttpUtils.paserResponse(result);
+
+                    if(rb.getJson_result() == HttpConfig.RES_SUCCESS){
+                        Intent intent = new Intent(ResigerActivity.this,ShouYeActivity.class);
+                        startActivity(intent);
+
+                        setResult(101);
+                    }
+                    DialogUtils.showTips(ResigerActivity.this,rb.getJson_reason());
+                }
+
+                @Override
+                public void onError(String result) {
+                    showProgress(false);
+                    DialogUtils.showTips(ResigerActivity.this,result);
+                }
+            });
+
         }
     }
 
@@ -296,63 +337,6 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 

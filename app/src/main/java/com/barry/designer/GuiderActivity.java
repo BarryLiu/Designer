@@ -228,7 +228,7 @@ public class GuiderActivity extends AppCompatActivity {
         }
     }
 
-    private void attemptLogin() {
+   /* private void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }
@@ -302,7 +302,7 @@ public class GuiderActivity extends AppCompatActivity {
         return phone.length() == 11 || phone.length() == 7;
     }
 
-
+*/
     private UserLoginTask mAuthTask = null;
     // UI references.
     private AutoCompleteTextView mEmailView;

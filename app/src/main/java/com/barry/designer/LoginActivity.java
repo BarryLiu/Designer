@@ -19,8 +19,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -34,6 +36,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.barry.designer.bean.UserBean;
+import com.barry.designer.http.GKCallBack;
+import com.barry.designer.http.HttpUtils;
 import com.barry.designer.utils.BPUtil;
 
 import java.util.ArrayList;
@@ -66,20 +71,37 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private ImageView ivYanzhen;
+    private EditText etYanzhen;
+
     private View mProgressView;
     private View mLoginFormView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        Intent intent =new Intent(this,ShouYeActivity.class);
+        startActivity(intent);
+
         setContentView(R.layout.activity_login);
         //设置宽度
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        ImageView ivYanzhen = (ImageView) findViewById(R.id.iv_yanzhen);
+        ivYanzhen = (ImageView) findViewById(R.id.iv_yanzhen);
         ivYanzhen.setImageBitmap(BPUtil.getInstance().createBitmap());
+        etYanzhen = (EditText) findViewById(R.id.et_yanzhen);
         String s = BPUtil.getInstance().getCode();
-        Toast.makeText(this, "code:" + s, Toast.LENGTH_SHORT).show();
+
+        //设置点击验证码后改变验证码的值
+        ivYanzhen.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ivYanzhen.setImageBitmap(BPUtil.getInstance().createBitmap());
+            }
+        });
 
 
         // Set up the login form.
@@ -108,8 +130,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                if(event.getX()> mPasswordView.getWidth()-30){
+                    mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    return true;
+                }
+            case MotionEvent.ACTION_UP:
+                mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD|InputType.TYPE_CLASS_TEXT);
+                break;
+        }
+
+        return super.onTouchEvent(event);
+    }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -172,9 +212,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String yanzhen = etYanzhen.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
+
+        // Check for a valid yanzhen, if the user entered one.
+        if (!BPUtil.getInstance().getCode().equalsIgnoreCase(yanzhen)) {
+            etYanzhen.setError(getString(R.string.error_invalid_yanzhen));
+            focusView = etYanzhen;
+            cancel = true;
+        }
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
@@ -202,8 +250,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+           /* mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);*/
+
+
+            UserBean ub = new UserBean();
+            ub.setName(email);
+            ub.setPwd(password);
+
+
+            HttpUtils.loginer(ub,new GKCallBack(){
+
+                @Override
+                public void onSuccess(String result) {
+
+                }
+
+                @Override
+                public void onError(String result) {
+
+                }
+            });
         }
     }
 
@@ -350,7 +417,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent =new Intent(LoginActivity.this,ShouYeActivity.class);
+                Intent intent = new Intent(LoginActivity.this, ShouYeActivity.class);
                 startActivity(intent);
                 //finish();
             } else {

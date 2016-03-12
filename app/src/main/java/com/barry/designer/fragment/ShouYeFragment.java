@@ -43,10 +43,10 @@ public class ShouYeFragment extends Fragment {
 
         //创建布局
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
        // linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);//设置横着显示
        GridLayoutManager gridLayoutManager = new GridLayoutManager(inflater.getContext(), 5);
-       rv_list.setLayoutManager(gridLayoutManager);
+       rv_list.setLayoutManager(linearLayoutManager);
 
         //3创建适配器
         QuestionAdapter adapter = new QuestionAdapter(list, inflater.getContext());

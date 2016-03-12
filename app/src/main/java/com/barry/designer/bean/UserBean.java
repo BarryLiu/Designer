@@ -8,15 +8,9 @@ public class UserBean {
     private int level;
     private int sex;
     private int uuid;
-
+    private String name;
+    private String pwd;
     public UserBean() {
-    }
-
-    public UserBean(int id, int level, int sex, int uuid) {
-        this.id = id;
-        this.level = level;
-        this.sex = sex;
-        this.uuid = uuid;
     }
 
     public int getId() {
@@ -49,5 +43,17 @@ public class UserBean {
 
     public void setUuid(int uuid) {
         this.uuid = uuid;
+    }
+    public String getPwd() {
+        return pwd;
+    }
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }
