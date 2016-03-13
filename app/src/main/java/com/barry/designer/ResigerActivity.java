@@ -3,23 +3,19 @@ package com.barry.designer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.BoringLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -40,12 +36,6 @@ import com.barry.designer.http.HttpUtils;
 import com.barry.designer.utils.AbMd5;
 import com.barry.designer.utils.DialogUtils;
 
-import org.xutils.common.util.MD5;
-import org.xutils.http.app.ResponseParser;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,6 +210,8 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
                     showProgress(false);
                     ResponseBean rb =HttpUtils.paserResponse(result);
 
+                    DialogUtils.showLog(result);
+
                     if(rb.getJson_result() == HttpConfig.RES_SUCCESS){
                         Intent intent = new Intent(ResigerActivity.this,ShouYeActivity.class);
                         startActivity(intent);
@@ -301,7 +293,6 @@ public class ResigerActivity extends AppCompatActivity implements LoaderCallback
                 // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
-
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();

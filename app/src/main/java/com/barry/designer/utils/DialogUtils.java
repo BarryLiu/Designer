@@ -1,6 +1,7 @@
 package com.barry.designer.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -9,5 +10,8 @@ import android.widget.Toast;
 public class DialogUtils {
     public static void showTips(Context context,String text){
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    }
+    public static void showLog(String text){
+        Log.d("Dialog",text);
     }
 }

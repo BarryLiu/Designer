@@ -3,22 +3,19 @@ package com.barry.designer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -26,7 +23,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -34,12 +30,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.barry.designer.bean.ResponseBean;
 import com.barry.designer.bean.UserBean;
 import com.barry.designer.http.GKCallBack;
+import com.barry.designer.http.GKRequestParams;
+import com.barry.designer.http.HttpConfig;
 import com.barry.designer.http.HttpUtils;
+import com.barry.designer.util.FileUtils;
+import com.barry.designer.utils.AbMd5;
 import com.barry.designer.utils.BPUtil;
+import com.barry.designer.utils.DialogUtils;
+import com.barry.designer.utils.JsonUtils;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,10 +68,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -82,9 +83,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        Intent intent =new Intent(this,ShouYeActivity.class);
-        startActivity(intent);
 
         setContentView(R.layout.activity_login);
         //设置宽度
@@ -119,6 +117,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
         });
+
+        etYanzhen.setText(BPUtil.getInstance().getCode());
+        mEmailView.setText("111@111");
+        mPasswordView.setText("111111");
+
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -158,7 +161,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         getLoaderManager().initLoader(0, null, this);
     }
-
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -201,9 +203,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+
 
         // Reset errors.
         mEmailView.setError(null);
@@ -256,21 +256,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             UserBean ub = new UserBean();
             ub.setName(email);
-            ub.setPwd(password);
+            ub.setPwd(AbMd5.MD5(password));
 
-
-            HttpUtils.loginer(ub,new GKCallBack(){
+            HttpUtils.loginer(ub, new GKCallBack() {
 
                 @Override
                 public void onSuccess(String result) {
+                    showProgress(false);
+                    ResponseBean rb =HttpUtils.paserResponse(result);
+
+                    if(rb.getJson_result() == HttpConfig.RES_SUCCESS){
+                        ResponseBean rbean = HttpUtils.paserResponse(result);
+                        MyApplication.currUser = (UserBean) JsonUtils.fromJson( rbean.getJson_data().toString(), UserBean.class);
+                        FileUtils.saveUserDat(LoginActivity.this, MyApplication.currUser);
+
+
+                        Intent intent = new Intent(LoginActivity.this,ShouYeActivity.class);
+                        startActivity(intent);
+                        setResult(101);
+                        finish();
+
+                    }
+                    DialogUtils.showTips(LoginActivity.this,rb.getJson_reason());
 
                 }
 
                 @Override
                 public void onError(String result) {
-
+                    DialogUtils.showTips(LoginActivity.this, result);
+                    showProgress(false);
                 }
             });
+
         }
     }
 
@@ -374,63 +391,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                Intent intent = new Intent(LoginActivity.this, ShouYeActivity.class);
-                startActivity(intent);
-                //finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 

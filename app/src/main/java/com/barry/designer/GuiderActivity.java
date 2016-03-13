@@ -20,14 +20,24 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.barry.designer.util.FileUtils;
 import com.barry.designer.utils.BPUtil;
 import com.barry.designer.utils.BitmapUtil;
+
+import org.w3c.dom.Text;
+
+import java.io.File;
 
 import github.chenupt.springindicator.SpringIndicator;
 import me.relex.circleindicator.CircleIndicator;
@@ -50,6 +60,9 @@ public class GuiderActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if(bitmaps[0]==null)
+            return;
+
         bitmaps[0].recycle();
         bitmaps[1].recycle();
         bitmaps[2].recycle();
@@ -66,6 +79,16 @@ public class GuiderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guider);
+
+
+        MyApplication.currUser = FileUtils.getDatUser(this);
+
+        if(MyApplication.currUser !=null){//有登录缓存
+            Intent intent = new Intent(this,ShouYeActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -103,6 +126,8 @@ public class GuiderActivity extends AppCompatActivity {
 
     }
 
+
+
     public Bitmap decoeSampleBitmap(Resources resources,int id){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -132,66 +157,25 @@ public class GuiderActivity extends AppCompatActivity {
     //登录
     public void login(View view) {
 
-      /*  View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
-        Button signBtn = (Button) loginView.findViewById(R.id.email_sign_in_button);
-        signBtn.setText("登陆");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(loginView);
-        builder.show();
-
-        mLoginFormView = loginView.findViewById(R.id.login_form);
-        mProgressView = loginView.findViewById(R.id.login_progress);
-
-        mEmailView = (AutoCompleteTextView) loginView.findViewById(R.id.email);
-        mPasswordView = (EditText) loginView.findViewById(R.id.password);
-
-        signBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attemptLogin();
-//                Intent intent = new Intent(GuiderActivity.this, MainActivity.class);
-//                startActivity(intent);
-            }
-        });*/
-
         Intent intent= new Intent(this,LoginActivity.class);
         startActivityForResult(intent,100);
     }
 
     //注册
     public void sign(View view) {
-      /*  final View loginView = LayoutInflater.from(this).inflate(R.layout.activity_login, null);
-        Button signBtn = (Button) loginView.findViewById(R.id.email_sign_in_button);
-        signBtn.setText("注册");
-        TextInputLayout phoneLayout = (TextInputLayout) loginView.findViewById(R.id.phone_layout);
-        phoneLayout.setVisibility(View.VISIBLE);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(loginView);
-        builder.show();
-
-        mLoginFormView = loginView.findViewById(R.id.login_form);
-        mProgressView = loginView.findViewById(R.id.login_progress);
-
-        mEmailView = (AutoCompleteTextView) loginView.findViewById(R.id.email);
-        mPasswordView = (EditText) loginView.findViewById(R.id.password);
-
-
-        signBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                phoneNumber = (EditText) loginView.findViewById(R.id.phone_number);
-                attemptLogin();
-//                Intent intent = new Intent(GuiderActivity.this, MainActivity.class);
-//                startActivity(intent);
-            }
-        });
-
-        */
 
         Intent intent = new Intent(this,ResigerActivity.class);
         startActivity(intent);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode ==100 && resultCode == 101){
+            finish();
+        }
+
+    }
     //创建一个Fragment的类
     public static class SectionFragment extends Fragment {
 
@@ -199,8 +183,10 @@ public class GuiderActivity extends AppCompatActivity {
             SectionFragment fragment = new SectionFragment();
             Bundle b = new Bundle();
             b.putInt("pos", position);
+
             //创建一个bundle用于传递
             fragment.setArguments(b);
+
             return fragment;
         }
 
@@ -224,85 +210,27 @@ public class GuiderActivity extends AppCompatActivity {
             imageView.setAdjustViewBounds(true);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
+
+            //找到imageView
+            TextView tvGrider = (TextView) view.findViewById(R.id.tv_guider_text);
+            tvGrider.setText("abc多舒服啊胜多负少");
+
+
+            Animation animation =new TranslateAnimation(0,0,0,-50);
+            animation.setDuration(1000);
+            animation.setFillAfter(true);
+
+            float f = (float) 0.2;
+            float t = (float) 0.9;
+            AlphaAnimation am = new AlphaAnimation(f,t);
+            am.setFillAfter(true);
+            am.setDuration(1000);
+            tvGrider.setAnimation(am);
+
             return view;
         }
     }
 
-   /* private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        String phone = null;
-
-        boolean cancel = false;
-        View focusView = null;
-
-        if (phoneNumber != null) {//判断手机号（注册） 登陆没有进去
-            phoneNumber.setError(null);
-            phone = phoneNumber.getText().toString();
-            if (TextUtils.isEmpty(phone) || !isPhoneValid(phone)) {
-                phoneNumber.setError(getString(R.string.error_invalid_phone));
-                focusView = phoneNumber;
-                cancel = true;
-            }
-        }
-
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-
-            mAuthTask = new UserLoginTask(email, password, phone);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
-
-    private boolean isPhoneValid(String phone) {
-        //TODO: Replace this with your own logic
-        return phone.length() == 11 || phone.length() == 7;
-    }
-
-*/
     private UserLoginTask mAuthTask = null;
     // UI references.
     private AutoCompleteTextView mEmailView;

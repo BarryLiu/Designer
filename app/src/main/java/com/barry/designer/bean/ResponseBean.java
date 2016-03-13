@@ -8,13 +8,13 @@ import org.json.JSONObject;
 public class ResponseBean {
     private int json_result;
     private String json_reason;
-    private JSONObject json_data;
+    private String json_data;
 
 
     public ResponseBean() {
     }
 
-    public ResponseBean(int json_result, String json_reason, JSONObject json_data) {
+    public ResponseBean(int json_result, String json_reason, String json_data) {
         this.json_result = json_result;
         this.json_reason = json_reason;
         this.json_data = json_data;
@@ -36,11 +36,11 @@ public class ResponseBean {
         this.json_reason = json_reason;
     }
 
-    public JSONObject getJson_data() {
+    public String getJson_data() {
         return json_data;
     }
 
-    public void setJson_data(JSONObject json_data) {
+    public void setJson_data(String json_data) {
         this.json_data = json_data;
     }
 }

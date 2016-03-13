@@ -1,16 +1,29 @@
 package com.barry.designer.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Barry on 2016/3/11.
  */
-public class UserBean {
+public class UserBean implements Serializable{
     private int id;
     private int level;
     private int sex;
     private int uuid;
     private String name;
     private String pwd;
+
+    private String imageData;
     public UserBean() {
+    }
+
+
+    public String getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(String imageData) {
+        this.imageData = imageData;
     }
 
     public int getId() {
@@ -55,5 +68,17 @@ public class UserBean {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "id=" + id +
+                ", level=" + level +
+                ", sex=" + sex +
+                ", uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", pwd='" + pwd + '\'' +
+                '}';
     }
 }

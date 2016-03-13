@@ -17,7 +17,6 @@ package com.barry.designer.utils;
 
 import java.security.MessageDigest;
 
-// TODO: Auto-generated Javadoc
 
 /**
  * © 2012 amsoft.cn

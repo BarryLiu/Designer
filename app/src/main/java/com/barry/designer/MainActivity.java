@@ -3,8 +3,6 @@ package com.barry.designer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -17,9 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.barry.designer.fragment.ShouYeFragment;
+import com.barry.designer.util.FileUtils;
+import com.barry.designer.utils.DialogUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,16 +35,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -52,7 +44,48 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initUserView(navigationView);
     }
+
+    private void initUserView(NavigationView navigationView) {
+        if(MyApplication.currUser!=null){
+
+            TextView tvName = (TextView)navigationView.getHeaderView(0).findViewById(R.id.tv_name);
+            tvName.setText(MyApplication.currUser.getName());
+            DialogUtils.showTips(MainActivity.this,"A"+MyApplication.currUser.getName());
+
+        }
+
+        ImageView ivHead  = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_head);
+        ivHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(MainActivity.this,UserActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        loginOut(navigationView);
+    }
+
+    /**
+     * 退出登录
+     * @param navigationView
+     */
+    private void loginOut(NavigationView navigationView) {
+        FileUtils.delDatUser(MainActivity.this);
+        Button btnExit= (Button) navigationView.getHeaderView(0).findViewById(R.id.btn_exit);
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GuiderActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
 
     public void setContentFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
@@ -123,4 +156,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }
