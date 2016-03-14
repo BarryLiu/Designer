@@ -12,6 +12,7 @@ public class DialogUtils {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
     public static void showLog(String text){
-        Log.d("Dialog",text);
+        Log.d("Dialog", text);
     }
-}
+
+  }

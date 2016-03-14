@@ -134,20 +134,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(event.getX()> mPasswordView.getWidth()-30){
+                if (event.getX() > mPasswordView.getWidth() - 30) {
                     mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     return true;
                 }
+                DialogUtils.showTips(this,"eventx:"+event.getX()+" mpass:"+mPasswordView.getWidth());
             case MotionEvent.ACTION_UP:
-                mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD|InputType.TYPE_CLASS_TEXT);
+                mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
                 break;
         }
 
@@ -158,9 +157,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
+
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -263,21 +262,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onSuccess(String result) {
                     showProgress(false);
-                    ResponseBean rb =HttpUtils.paserResponse(result);
+                    ResponseBean rb = HttpUtils.paserResponse(result);
 
-                    if(rb.getJson_result() == HttpConfig.RES_SUCCESS){
+                    if (rb.getJson_result() == HttpConfig.RES_SUCCESS) {
                         ResponseBean rbean = HttpUtils.paserResponse(result);
-                        MyApplication.currUser = (UserBean) JsonUtils.fromJson( rbean.getJson_data().toString(), UserBean.class);
+                        MyApplication.currUser = (UserBean) JsonUtils.fromJson(rbean.getJson_data().toString(), UserBean.class);
                         FileUtils.saveUserDat(LoginActivity.this, MyApplication.currUser);
 
 
-                        Intent intent = new Intent(LoginActivity.this,ShouYeActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, ShouYeActivity.class);
                         startActivity(intent);
                         setResult(101);
                         finish();
 
                     }
-                    DialogUtils.showTips(LoginActivity.this,rb.getJson_reason());
+                    DialogUtils.showTips(LoginActivity.this, rb.getJson_reason());
 
                 }
 

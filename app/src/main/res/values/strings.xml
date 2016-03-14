@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Designer</string>
+    <string name="app_name">仿知乎</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">账号</string>

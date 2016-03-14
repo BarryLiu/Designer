@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.barry.designer.utils.AbBase64;
 import com.barry.designer.utils.DialogUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -34,6 +36,7 @@ public class UserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         ivHead = (ImageView) findViewById(R.id.iv_head);
+        ivHead.setDrawingCacheEnabled(true);
         btnHead = (Button) findViewById(R.id.btn_update);
         etName = (EditText) findViewById(R.id.email);
 
@@ -42,12 +45,12 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder builder =new AlertDialog.Builder(UserActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
 
                 builder.setItems(new String[]{"相册", "拍照"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             case 0:
                                 //隐式调用打开相册
 
@@ -56,6 +59,20 @@ public class UserActivity extends AppCompatActivity {
                                 startActivityForResult(albumIntent, 1);
                                 break;
                             case 1:
+                                /**
+                                 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
+                                 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
+                                 * 我刚看的时候因为太长就认真看，其实是错的，这个里面有用的太多了，所以大家不要认为
+                                 * 官方文档太长了就不看了，其实是错的，这个地方小马也错了，必须改正
+                                 */
+                                Intent intent = new Intent(
+                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                //下面这句指定调用相机拍照后的照片存储的路径
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+                                        .fromFile(new File(Environment
+                                                .getExternalStorageDirectory(),
+                                                "xiaoma.jpg")));
+                                startActivityForResult(intent, 2);
 
                                 break;
                         }
@@ -64,7 +81,6 @@ public class UserActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
 
 
         btnHead.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +97,7 @@ public class UserActivity extends AppCompatActivity {
                 MyApplication.currUser.setImageData(imageStr);
                 MyApplication.currUser.setName(etName.getText().toString());
                 //发送请求
-                HttpUtils.updater(MyApplication.currUser, new GKCallBack(){
+                HttpUtils.updater(MyApplication.currUser, new GKCallBack() {
 
                     @Override
                     public void onSuccess(String result) {
@@ -102,19 +118,21 @@ public class UserActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
                 startPhotoZoom(data.getData());
                 break;
             case 2:
-
+                File temp = new File(Environment.getExternalStorageDirectory()
+                        + "/xiaoma.jpg");
+                startPhotoZoom(Uri.fromFile(temp));
                 break;
             case 3:
 
                 Bundle extras = data.getExtras();
                 if (data != null) {
                     Bitmap photo = extras.getParcelable("data");
-                    Drawable drawable = new BitmapDrawable(getResources(),photo);
+                    Drawable drawable = new BitmapDrawable(getResources(), photo);
                     ivHead.setImageDrawable(drawable);
                 }
                 break;
@@ -124,10 +142,11 @@ public class UserActivity extends AppCompatActivity {
 
     /**
      * 裁剪图片方法实现
+     *
      * @param uri
      */
     public void startPhotoZoom(Uri uri) {
-		/*
+        /*
 		 * 至于下面这个Intent的ACTION是怎么知道的，大家可以看下自己路径下的如下网页
 		 * yourself_sdk_path/docs/reference/android/content/Intent.html
 		 * 直接在里面Ctrl+F搜：CROP ，之前小马没仔细看过，其实安卓系统早已经有自带图片裁剪功能,

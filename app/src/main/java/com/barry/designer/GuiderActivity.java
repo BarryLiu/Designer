@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.barry.designer.util.FileUtils;
 import com.barry.designer.utils.BPUtil;
 import com.barry.designer.utils.BitmapUtil;
+import com.barry.designer.utils.DialogUtils;
 
 import org.w3c.dom.Text;
 
@@ -80,7 +81,6 @@ public class GuiderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guider);
 
-
         MyApplication.currUser = FileUtils.getDatUser(this);
 
         if(MyApplication.currUser !=null){//有登录缓存
@@ -120,10 +120,11 @@ public class GuiderActivity extends AppCompatActivity {
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.ci_guider);
         indicator.setViewPager(viewPager);
 
-        SpringIndicator indicator2 = (SpringIndicator) findViewById(R.id.indicator);
+        /*SpringIndicator indicator2 = (SpringIndicator) findViewById(R.id.indicator);
         indicator2.setViewPager(viewPager);
+*/
 
-
+        viewPager.setPageTransformer(true,new ViewPageTrans());
     }
 
 
@@ -213,25 +214,31 @@ public class GuiderActivity extends AppCompatActivity {
 
             //找到imageView
             TextView tvGrider = (TextView) view.findViewById(R.id.tv_guider_text);
-            tvGrider.setText("abc多舒服啊胜多负少");
-
+            switch (position){
+                case 0:
+                    tvGrider.setText("在这里找到朋友");
+                    break;
+                case 1:
+                    tvGrider.setText("他是技术宅");
+                    break;
+                case 2:
+                    tvGrider.setText("他是老总");
+                    break;
+            }
 
             Animation animation =new TranslateAnimation(0,0,0,-50);
             animation.setDuration(1000);
             animation.setFillAfter(true);
-
             float f = (float) 0.2;
             float t = (float) 0.9;
             AlphaAnimation am = new AlphaAnimation(f,t);
             am.setFillAfter(true);
             am.setDuration(1000);
-            tvGrider.setAnimation(am);
 
+          //  tvGrider.setAnimation(am);
             return view;
         }
     }
-
-    private UserLoginTask mAuthTask = null;
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -244,70 +251,6 @@ public class GuiderActivity extends AppCompatActivity {
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-        private final String mPhone;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-            mPhone = null;
-        }
-
-        public UserLoginTask(String email, String password, String phone) {
-            this.mEmail = email;
-            this.mPassword = password;
-            this.mPhone = phone;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            // showProgress(false);
-
-            if (success) {
-                Intent intent = new Intent(GuiderActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
 
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -341,5 +284,31 @@ public class GuiderActivity extends AppCompatActivity {
         }
     }
 
+    public static class ViewPageTrans implements ViewPager.PageTransformer {
+        private static final float MIN_SCALE = 0.75f;
 
+        @Override
+        public void transformPage(View page, float position) {
+            TextView tv = (TextView) page.findViewById(R.id.tv_guider_text);
+            TextView tv1 = (TextView) page.findViewById(R.id.tv_guider_text);
+
+
+
+            DialogUtils.showLog(position+",");
+            int count = (int) (60 * Math.abs(position));
+            if (position < 0) {
+                tv.setAlpha(1 - Math.abs(position) * 2);
+                tv.setPadding(count, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
+                tv1.setAlpha(1 - Math.abs(position) * 2);
+                tv1.setPadding(count, tv1.getPaddingTop(), tv1.getPaddingRight(), tv1.getPaddingBottom());
+            }
+            if (position > 0) {
+                tv.setAlpha(1 - Math.abs(Math.abs(position)));
+                tv.setPadding(count, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
+                tv1.setAlpha(1 - Math.abs(Math.abs(position)));
+                tv1.setPadding(count, tv1.getPaddingTop(), tv1.getPaddingRight(), tv1.getPaddingBottom());
+            }
+
+        }
+    }
 }
