@@ -6,11 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,11 +18,14 @@ import android.widget.ImageView;
 
 import com.barry.designer.http.GKCallBack;
 import com.barry.designer.http.HttpUtils;
+import com.barry.designer.util.FileUtils;
 import com.barry.designer.utils.AbBase64;
 import com.barry.designer.utils.DialogUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -87,7 +90,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Bitmap bitmap = ivHead.getDrawingCache();
+                final Bitmap bitmap = ivHead.getDrawingCache();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -95,13 +98,21 @@ public class UserActivity extends AppCompatActivity {
                 String imageStr = AbBase64.encode(baos.toByteArray());
 
                 MyApplication.currUser.setImageData(imageStr);
-                MyApplication.currUser.setName(etName.getText().toString());
                 //发送请求
                 HttpUtils.updater(MyApplication.currUser, new GKCallBack() {
 
                     @Override
                     public void onSuccess(String result) {
                         DialogUtils.showTips(UserActivity.this, "修改成功");
+                        //成功后保存到本地
+                        try {
+                            File fileDir = FileUtils.getCacheDir(UserActivity.this);
+                            File file  = new File(fileDir,MyApplication.currUser.getName());
+                            bitmap.compress(Bitmap.CompressFormat.PNG,100,new FileOutputStream(file));
+                            DialogUtils.showLog("保存文件成功");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override

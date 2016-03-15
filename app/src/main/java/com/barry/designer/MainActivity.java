@@ -2,19 +2,20 @@ package com.barry.designer;
 
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,9 +24,10 @@ import android.widget.Toast;
 import com.barry.designer.util.FileUtils;
 import com.barry.designer.utils.DialogUtils;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
 
 
     @Override
@@ -49,33 +51,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initUserView(NavigationView navigationView) {
-        if(MyApplication.currUser!=null){
 
-            TextView tvName = (TextView)navigationView.getHeaderView(0).findViewById(R.id.tv_name);
-            tvName.setText(MyApplication.currUser.getName());
-            DialogUtils.showTips(MainActivity.this,"A"+MyApplication.currUser.getName());
-
-        }
-
-        ImageView ivHead  = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_head);
+        ImageView ivHead = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_head);
         ivHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(MainActivity.this,UserActivity.class);
+                Intent intent = new Intent(MainActivity.this, UserActivity.class);
                 startActivity(intent);
             }
         });
+        if (MyApplication.currUser != null) {
 
+            TextView tvName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_name);
+            tvName.setText(MyApplication.currUser.getName());
+
+            //设置缓存的文件
+             File headIcon = new File(FileUtils.getCacheDir(MainActivity.this), MyApplication.currUser.getName() + ".png");
+            if (headIcon.exists()) {
+                ivHead.setImageBitmap(BitmapFactory.decodeFile(headIcon.getPath()));
+            }else{
+                ivHead.setImageResource(R.mipmap.ic_launcher);
+            }
+        }
         loginOut(navigationView);
     }
 
     /**
      * 退出登录
+     *
      * @param navigationView
      */
     private void loginOut(NavigationView navigationView) {
         FileUtils.delDatUser(MainActivity.this);
-        Button btnExit= (Button) navigationView.getHeaderView(0).findViewById(R.id.btn_exit);
+        Button btnExit = (Button) navigationView.getHeaderView(0).findViewById(R.id.btn_exit);
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity
         ft.add(R.id.frag_content, fragment);
         ft.commit();
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -102,12 +111,14 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -138,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.setClass(this,ShouYeActivity.class);
+            intent.setClass(this, ShouYeActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
             Intent intent = new Intent(this, DiscoverActivity.class);

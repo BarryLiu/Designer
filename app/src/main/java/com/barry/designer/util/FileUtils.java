@@ -26,6 +26,9 @@ public class FileUtils {
         File dir = context.getCacheDir();
         return  new File(dir,USER_DAT);
     }
+    public static File getCacheDir(Context context){
+        return context.getCacheDir();
+    }
 
     //保存登陆用户信息
     public static boolean saveUserDat(Context context,UserBean ub) {
