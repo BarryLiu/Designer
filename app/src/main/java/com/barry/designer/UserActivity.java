@@ -44,6 +44,13 @@ public class UserActivity extends AppCompatActivity {
         etName = (EditText) findViewById(R.id.email);
 
 
+        Bitmap userIcon = FileUtils.getUserIcon(UserActivity.this);
+        if (userIcon!=null) {
+            ivHead.setImageBitmap(userIcon);
+        } else {
+            ivHead.setImageResource(R.mipmap.ic_launcher);
+        }
+
         ivHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,12 +113,13 @@ public class UserActivity extends AppCompatActivity {
                         DialogUtils.showTips(UserActivity.this, "修改成功");
                         //成功后保存到本地
                         try {
-                            File fileDir = FileUtils.getCacheDir(UserActivity.this);
-                            File file  = new File(fileDir,MyApplication.currUser.getName());
-                            bitmap.compress(Bitmap.CompressFormat.PNG,100,new FileOutputStream(file));
+                            FileUtils.saveUserDat(UserActivity.this,MyApplication.currUser);
+                            FileUtils.saveUserIcon(UserActivity.this, bitmap);
+
                             DialogUtils.showLog("保存文件成功");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
+                            DialogUtils.showLog("保存文件失败");
                         }
                     }
 
@@ -134,7 +142,7 @@ public class UserActivity extends AppCompatActivity {
                 startPhotoZoom(data.getData());
                 break;
             case 2:
-                File temp = new File(Environment.getExternalStorageDirectory()
+                File temp = new File(FileUtils.getCacheDir(UserActivity.this)
                         + "/xiaoma.jpg");
                 startPhotoZoom(Uri.fromFile(temp));
                 break;

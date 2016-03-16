@@ -47,7 +47,7 @@
         android:id="@+id/btn_exit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="logout"
+
         android:text="退出" />
 
 </LinearLayout>

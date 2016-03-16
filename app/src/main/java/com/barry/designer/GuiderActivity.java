@@ -2,6 +2,7 @@ package com.barry.designer;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -39,6 +40,7 @@ import com.barry.designer.utils.DialogUtils;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import github.chenupt.springindicator.SpringIndicator;
 import me.relex.circleindicator.CircleIndicator;

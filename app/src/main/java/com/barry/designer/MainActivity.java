@@ -2,7 +2,7 @@ package com.barry.designer;
 
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -22,9 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.barry.designer.util.FileUtils;
-import com.barry.designer.utils.DialogUtils;
-
-import java.io.File;
+import com.lzp.floatingactionbuttonplus.FabTagLayout;
+import com.lzp.floatingactionbuttonplus.FloatingActionButtonPlus;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,14 +43,33 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        FloatingActionButtonPlus fab = (FloatingActionButtonPlus) findViewById(R.id.FabPlus);
 
-        initUserView(navigationView);
+        fab.setOnItemClickListener(new FloatingActionButtonPlus.OnItemClickListener() {
+            @Override
+            public void onItemClick(FabTagLayout tagView, int position) {
+                switch (position) {
+                    case 0:
+                        Intent intent = new Intent(MainActivity.this, QuestionActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        break;
+                }
+            }
+        });
     }
 
-    private void initUserView(NavigationView navigationView) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initUserView();
+    }
 
+    NavigationView navigationView = null;
+    private void initUserView() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         ImageView ivHead = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_head);
         ivHead.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,22 +84,20 @@ public class MainActivity extends AppCompatActivity
             tvName.setText(MyApplication.currUser.getName());
 
             //设置缓存的文件
-             File headIcon = new File(FileUtils.getCacheDir(MainActivity.this), MyApplication.currUser.getName() + ".png");
-            if (headIcon.exists()) {
-                ivHead.setImageBitmap(BitmapFactory.decodeFile(headIcon.getPath()));
-            }else{
+            Bitmap userIcon = FileUtils.getUserIcon(MainActivity.this);
+            if (userIcon!=null) {
+                ivHead.setImageBitmap(userIcon);
+            } else {
                 ivHead.setImageResource(R.mipmap.ic_launcher);
             }
         }
-        loginOut(navigationView);
     }
 
     /**
      * 退出登录
-     *
-     * @param navigationView
      */
-    private void loginOut(NavigationView navigationView) {
+    private void loginOut(View view) {
+
         FileUtils.delDatUser(MainActivity.this);
         Button btnExit = (Button) navigationView.getHeaderView(0).findViewById(R.id.btn_exit);
         btnExit.setOnClickListener(new View.OnClickListener() {

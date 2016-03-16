@@ -1,13 +1,18 @@
 package com.barry.designer.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 
 import com.barry.designer.MyApplication;
+import com.barry.designer.UserActivity;
 import com.barry.designer.bean.UserBean;
+import com.barry.designer.utils.BitmapUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +37,7 @@ public class FileUtils {
 
     //保存登陆用户信息
     public static boolean saveUserDat(Context context,UserBean ub) {
-        File userFile = getCacheUserFile(context);
+        File userFile =getCacheUserFile(context);
         try {
             ObjectOutputStream oos =new ObjectOutputStream(new FileOutputStream(userFile));
 
@@ -79,4 +84,29 @@ public class FileUtils {
             file.delete();
     }
 
+    /**
+     * 保存用户的头像
+     * @param context
+     * @param bitmap
+     * @throws FileNotFoundException
+     */
+    public static void saveUserIcon(Context context, Bitmap bitmap) throws FileNotFoundException {
+        File fileDir = FileUtils.getCacheDir(context);
+        File file  = new File(fileDir,MyApplication.currUser.getName()+".png");
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,new FileOutputStream(file));
+    }
+
+    /**
+     * 得到用户头像
+     * @param context
+     * @return
+     */
+    public static Bitmap getUserIcon(Context context){
+        File fileDir = FileUtils.getCacheDir(context);
+        File file  = new File(fileDir,MyApplication.currUser.getName()+".png");
+        if(file.exists())
+            return BitmapFactory.decodeFile(file.getPath());
+        else
+            return null;
+    }
 }
