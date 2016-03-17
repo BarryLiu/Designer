@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.barry.designer.bean.UserBean;
 import com.barry.designer.http.HttpUtils;
+import com.barry.designer.util.AuthTokenUtils;
 
 import org.xutils.x;
 
@@ -13,6 +14,7 @@ import org.xutils.x;
 public class MyApplication extends Application {
 
     public static UserBean currUser;
+    public static String uuid ;
 
     @Override
     public void onCreate() {
@@ -22,7 +24,7 @@ public class MyApplication extends Application {
         x.Ext.init(this);
         x.Ext.setDebug(true);
         */
-
+        uuid = AuthTokenUtils.getUUid(this);
         //http
         HttpUtils.init(this);
     }

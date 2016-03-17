@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-// TODO: Auto-generated Javadoc
 /**
  * © 2012 amsoft.cn 
  * 名称：AbBase64.java 

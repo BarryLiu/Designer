@@ -12,7 +12,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 
 /**
  * Created by aya4 on 2015/12/15.
@@ -249,6 +251,48 @@ public class BitmapUtil {
         return resizeBmp;
     }
 
+
+    public static Bitmap getCutBitmap(FileDescriptor fd, int desiredWidth, int desiredHeight) {
+
+        Bitmap resizeBmp = null;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        // 设置为true,decodeFile先不创建内存 只获取一些解码边界信息即图片大小信息
+        opts.inJustDecodeBounds = true;
+        //BitmapFactory.decodeFile(file.getPath(), opts);
+
+        BitmapFactory.decodeFileDescriptor(fd,null,opts);
+        // 获取图片的原始宽度
+        int srcWidth = opts.outWidth;
+        // 获取图片原始高度
+        int srcHeight = opts.outHeight;
+
+        int[] size = resizeToMaxSize(srcWidth, srcHeight, desiredWidth, desiredHeight);
+        desiredWidth = size[0];
+        desiredHeight = size[1];
+
+
+        // 默认为ARGB_8888.
+        opts.inPreferredConfig = Bitmap.Config.RGB_565;
+        // 以下两个字段需一起使用：
+        // 产生的位图将得到像素空间，如果系统gc，那么将被清空。当像素再次被访问，如果Bitmap已经decode，那么将被自动重新解码
+        opts.inPurgeable = true;
+        // 位图可以共享一个参考输入数据(inputstream、阵列等)
+        opts.inInputShareable = true;
+        // 缩放的比例，缩放是很难按准备的比例进行缩放的，通过inSampleSize来进行缩放，其值表明缩放的倍数，SDK中建议其值是2的指数值
+        int sampleSize = findBestSampleSize(srcWidth,srcHeight,desiredWidth,desiredHeight);
+        opts.inSampleSize = sampleSize;
+        // 创建内存
+        opts.inJustDecodeBounds = false;
+        // 使图片不抖动
+        opts.inDither = false;
+        resizeBmp =  BitmapFactory.decodeFileDescriptor(fd, null, opts);
+
+        if (resizeBmp != null) {
+            resizeBmp = getCutBitmap(resizeBmp, desiredWidth, desiredHeight);
+        }
+        return resizeBmp;
+    }
     /**
      * 描述：裁剪图片.
      *
@@ -365,5 +409,11 @@ public class BitmapUtil {
             return false;
         }
         return true;
+    }
+
+    public static String getBitmapBase64(Bitmap bm) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG,100,bos);
+        return AbBase64.encode(bos.toByteArray());
     }
 }

@@ -3,6 +3,8 @@ package com.barry.designer.http;
 import android.app.Application;
 import android.util.Log;
 
+import com.barry.designer.MyApplication;
+import com.barry.designer.bean.QuestionBean;
 import com.barry.designer.bean.ResponseBean;
 import com.barry.designer.bean.UserBean;
 import com.barry.designer.http.xutil.XUtilImpl;
@@ -88,6 +90,17 @@ public class HttpUtils {
         String url = HttpConfig.HOST + HttpConfig.UPDATE_URL;
 
         params.setUrl(url);
+        httpClient.post(params, callBack);
+    }
+
+    public static void makeQuestion(QuestionBean qb, GKCallBack callBack) {
+        String url = HttpConfig.HOST + HttpConfig.MAKE_QUESTION_URL;
+        String jsonStr = JsonUtils.toJson(qb);
+
+        GKRequestParams params = new GKRequestParams();
+        params.setUrl(url);
+        params.addParams(HttpConfig.TAG_QUESTION_JSON, jsonStr);
+
         httpClient.post(params, callBack);
     }
 }

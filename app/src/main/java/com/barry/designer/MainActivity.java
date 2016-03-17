@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -43,8 +44,9 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        FloatingActionButtonPlus fab = (FloatingActionButtonPlus) findViewById(R.id.FabPlus);
 
+
+        FloatingActionButtonPlus fab = (FloatingActionButtonPlus) findViewById(R.id.FabPlus);
         fab.setOnItemClickListener(new FloatingActionButtonPlus.OnItemClickListener() {
             @Override
             public void onItemClick(FabTagLayout tagView, int position) {
@@ -58,6 +60,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
@@ -128,12 +136,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,7 +153,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_xiaoxi:
                 Toast.makeText(MainActivity.this, "点击消息", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.action_signout:
+                FileUtils.delDatUser(MainActivity.this);
+                Intent intent = new Intent(MainActivity.this, GuiderActivity.class);
+                startActivity(intent);
+                finish();
 
+                return true;
+            case R.id.action_about:
+
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

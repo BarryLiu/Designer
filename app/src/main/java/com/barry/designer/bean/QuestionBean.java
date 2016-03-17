@@ -4,24 +4,25 @@ package com.barry.designer.bean;
  * Created by Barry on 2016/3/9.
  */
 public class QuestionBean {
+    private int id;
     private String name;
+    private String words;
     private String detail;
+    private int author;
+    private String time;
 
-    public QuestionBean() {
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getWords() {
+        return words;
     }
 
-    public QuestionBean(String name, String detail) {
-
-        this.name = name;
-        this.detail = detail;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setWords(String words) {
+        this.words = words;
     }
 
     public String getDetail() {
@@ -32,11 +33,27 @@ public class QuestionBean {
         this.detail = detail;
     }
 
-    @Override
-    public String toString() {
-        return "QuestionBean{" +
-                "name='" + name + '\'' +
-                ", detail='" + detail + '\'' +
-                '}';
+    public int getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(int author) {
+        this.author = author;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
