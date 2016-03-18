@@ -5,4 +5,6 @@ package com.barry.designer.http;
  */
 public interface IHttp {
     public void post(GKRequestParams params , GKCallBack callBack);
+
+    public void get(GKRequestParams params, GKCallBack callBack);
 }

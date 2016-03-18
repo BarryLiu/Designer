@@ -56,4 +56,16 @@ public class QuestionBean {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", words='" + words + '\'' +
+                ", detail='" + detail + '\'' +
+                ", author=" + author +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

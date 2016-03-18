@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.barry.designer.R;
 import com.barry.designer.bean.QuestionBean;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -57,14 +59,21 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListVi
 
     public class ListViewHolder extends RecyclerView.ViewHolder{
         TextView tv_name;
+        TextView tv_detail;
+        TextView tv_time;
         public ListViewHolder(View itemView) {
             super(itemView);
             tv_name = (TextView) itemView.findViewById(R.id.tv_name);
+            tv_detail = (TextView) itemView.findViewById(R.id.tv_detail);
+            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
+
         }
 
         public void setData(int position){
             QuestionBean qb = mList.get(position);
             tv_name.setText(qb.getName());
+            tv_detail.setText(qb.getDetail());
+            tv_time.setText(qb.getTime());
         }
     }
 
