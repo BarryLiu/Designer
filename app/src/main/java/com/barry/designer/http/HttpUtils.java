@@ -1,18 +1,31 @@
 package com.barry.designer.http;
 
 import android.app.Application;
+import android.net.Uri;
 import android.util.Log;
 
 import com.barry.designer.MyApplication;
+import com.barry.designer.QuestionDetailActivity;
 import com.barry.designer.bean.QuestionBean;
 import com.barry.designer.bean.ResponseBean;
 import com.barry.designer.bean.UserBean;
 import com.barry.designer.http.xutil.XUtilImpl;
+import com.barry.designer.utils.DialogUtils;
 import com.barry.designer.utils.JsonUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by Barry on 2016/3/11.
@@ -134,5 +147,42 @@ public class HttpUtils {
         params.setUrl(url);
 
         httpClient.get(params, callBack);
+    }
+
+    public static void getPictrueForPic(String fileName,  final GKCallBack callBack) {
+
+
+        final String url = HttpConfig.HOST+"/"+fileName;
+        GKRequestParams params = new GKRequestParams();
+        params.setUrl(url);
+       // httpClient.getPic(params,  callBack);
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL httpUrl = new URL(url);
+                    URLConnection conn = httpUrl.openConnection();
+                    InputStream is = conn.getInputStream();
+
+                    QuestionDetailActivity.currIs=is;
+
+                    DialogUtils.showLog("得到图片isok：" + QuestionDetailActivity.currIs);
+                    callBack.onSuccess("ok");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    DialogUtils.showLog("得到图片iserror：" + QuestionDetailActivity.currIs);
+                    callBack.onError("error");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    DialogUtils.showLog("得到图片is："+QuestionDetailActivity.currIs);
+                }
+            }
+        };
+        new Thread(r).start();
+
+
+
     }
 }

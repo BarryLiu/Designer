@@ -72,6 +72,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListVi
         public void setData(int position){
             QuestionBean qb = mList.get(position);
             tv_name.setText(qb.getName());
+            tv_name.setTag(qb.getId());
             tv_detail.setText(qb.getDetail());
             tv_time.setText(qb.getTime());
         }

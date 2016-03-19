@@ -6,7 +6,7 @@ import java.security.PublicKey;
  * Created by Barry on 2016/3/11.
  */
 public class HttpConfig {
-    public static final String HOST = "http://192.168.56.1:8080/DesignerServer";
+    public static final String HOST = "http://192.168.1.179:8080/DesignerServer";
     public static final String HAEDER_USER_NAME= "user_auth_name";
     public static final String HAEDER_USER_ID= "user_auth";
 

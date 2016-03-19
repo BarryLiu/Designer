@@ -1,5 +1,7 @@
 package com.barry.designer.http;
 
+import java.io.File;
+
 /**
  * Created by Barry on 2016/3/11.
  */

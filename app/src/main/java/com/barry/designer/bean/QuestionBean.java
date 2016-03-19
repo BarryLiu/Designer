@@ -1,9 +1,11 @@
 package com.barry.designer.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Barry on 2016/3/9.
  */
-public class QuestionBean {
+public class QuestionBean implements Serializable{
     private int id;
     private String name;
     private String words;

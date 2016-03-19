@@ -93,13 +93,13 @@ public class QuestionActivity extends AppCompatActivity implements NavigationVie
                         DialogUtils.showTips(QuestionActivity.this, rb.getJson_reason());
                     }
 
+
                     @Override
                     public void onError(String result) {
                         DialogUtils.showLog("提问成功");
                         DialogUtils.showTips(QuestionActivity.this,"提问成功");
                     }
                 });
-
                 break;
             case R.id.action_image://选择图片
                 Intent albumIntent = new Intent(Intent.ACTION_PICK, null);

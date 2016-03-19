@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.barry.designer.GuiderActivity;
+import com.barry.designer.QuestionDetailActivity;
 import com.barry.designer.R;
 import com.barry.designer.adapter.QuestionAdapter;
 import com.barry.designer.bean.QuestionBean;
@@ -78,7 +79,11 @@ public class ShouYeFragment extends Fragment {
 
                     @Override
                     public void onItemClick(View itemView, int position) {
-                        Intent intent = new Intent(getContext(), GuiderActivity.class);
+
+                        QuestionBean qb = list.get(position);
+                        Intent intent = new Intent(getContext(), QuestionDetailActivity.class);
+
+                        intent.putExtra("qb",qb);
                         startActivity(intent);
                     }
 
