@@ -45,7 +45,7 @@ public class UserActivity extends AppCompatActivity {
 
 
         Bitmap userIcon = FileUtils.getUserIcon(UserActivity.this);
-        if (userIcon!=null) {
+        if (userIcon != null) {
             ivHead.setImageBitmap(userIcon);
         } else {
             ivHead.setImageResource(R.mipmap.ic_launcher);
@@ -113,7 +113,7 @@ public class UserActivity extends AppCompatActivity {
                         DialogUtils.showTips(UserActivity.this, "修改成功");
                         //成功后保存到本地
                         try {
-                            FileUtils.saveUserDat(UserActivity.this,MyApplication.currUser);
+                            FileUtils.saveUserDat(UserActivity.this, MyApplication.currUser);
                             FileUtils.saveUserIcon(UserActivity.this, bitmap);
 
                             DialogUtils.showLog("保存文件成功");
@@ -166,7 +166,7 @@ public class UserActivity extends AppCompatActivity {
      */
     public void startPhotoZoom(Uri uri) {
         /*
-		 * 至于下面这个Intent的ACTION是怎么知道的，大家可以看下自己路径下的如下网页
+         * 至于下面这个Intent的ACTION是怎么知道的，大家可以看下自己路径下的如下网页
 		 * yourself_sdk_path/docs/reference/android/content/Intent.html
 		 * 直接在里面Ctrl+F搜：CROP ，之前小马没仔细看过，其实安卓系统早已经有自带图片裁剪功能,
 		 * 是直接调本地库的，小马不懂C C++  这个不做详细了解去了，有轮子就用轮子，不再研究轮子是怎么

@@ -144,7 +144,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
     }
 
     // 从<img>中解析出src中的文字d
-    private static String[] getImgs(String content) {
+    public static String[] getImgs(String content) {
         String img = "";
         Pattern p_image;
         Matcher m_image;

@@ -2,6 +2,7 @@ package com.barry.designer.adapter;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.barry.designer.QuestionDetailActivity;
 import com.barry.designer.R;
 import com.barry.designer.bean.QuestionBean;
 
@@ -66,6 +68,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListVi
             tv_name = (TextView) itemView.findViewById(R.id.tv_name);
             tv_detail = (TextView) itemView.findViewById(R.id.tv_detail);
             tv_time = (TextView) itemView.findViewById(R.id.tv_time);
+            tv_name.setTextColor(Color.RED);
 
         }
 
@@ -73,8 +76,22 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListVi
             QuestionBean qb = mList.get(position);
             tv_name.setText(qb.getName());
             tv_name.setTag(qb.getId());
-            tv_detail.setText(qb.getDetail());
             tv_time.setText(qb.getTime());
+
+            String fileNames[] = QuestionDetailActivity.getImgs(qb.getDetail());
+
+            //设置问题的显示 将<img src="" /> 的图片替换成 [图片]
+            String detail =qb.getDetail();
+            if(fileNames !=null){
+                for(int i=0;i<fileNames.length ;i++){
+
+                    detail =  detail.replace(fileNames[i],"图片");
+
+                    detail =  detail.replace("<img src=\"","[");
+                    detail =  detail.replace("\" />","]");
+                }
+            }
+            tv_detail.setText(detail);
         }
     }
 
